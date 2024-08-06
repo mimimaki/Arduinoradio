@@ -4,7 +4,9 @@ FM-radio receiver using arduino, audio amplifier and receiver module.
 
 Project repository: https://github.com/mimimaki/Arduinoradio
 
-![Demo](https://www.youtube.com/watch?v=bLxaeIw8OIc)
+## Demo
+Watch demo from link: 
+(https://www.youtube.com/watch?v=bLxaeIw8OIc)
 
 ## Hardware
 

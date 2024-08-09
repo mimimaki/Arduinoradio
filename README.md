@@ -6,9 +6,9 @@ Project repository: https://github.com/mimimaki/Arduinoradio
 
 ### Updates:
 Commit 10.08.2024:
-    * Switch LM386 to TDA2822M for much better audio quality and volume range
-    * Add tune options to move faster in between frequencies
-    * Added kicad files
+* Switch LM386 to TDA2822M for much better audio quality and volume range
+* Add tune options to move faster in between frequencies
+* Added kicad files
 
 ## Demo
 Watch demo from link: 

@@ -18,10 +18,18 @@
 #define ENCODER_DT 8
 #define ENCODER_SW 9
 
+#define TUNE_SLOW 0.05
+#define TUNE_MEDIUM 0.1
+#define TUNE_FAST 1
+
+enum TuneOption {SLOW = 0, MEDIUM = 1, FAST = 2};
+
 //Global variables
-int currentCLK;
-int lastCLK;
-bool buttonState = false;
+unsigned int currentCLK;
+unsigned int lastCLK;
+unsigned int buttonPushed = LOW;
+TuneOption tuneOption = MEDIUM;
+float fstep = TUNE_MEDIUM;
 
 unsigned int f_B;
 unsigned int f_H = 0;
@@ -44,11 +52,16 @@ void setFreq() {
   Wire.write(0x10);
   Wire.write((byte)0x00);
   Wire.endTransmission();
+
+  switch (tuneOption) {
+    case SLOW: fstep = TUNE_SLOW; break;
+    case MEDIUM: fstep = TUNE_MEDIUM; break;
+    case FAST: fstep = TUNE_FAST; break;
+    default: fstep = TUNE_MEDIUM; break;
+  }
 }
 
 void setDisplay() {
-  //Set parameters to display
-  display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS);
   display.clearDisplay();
   display.setTextSize(2);
   display.setTextColor(WHITE);
@@ -56,6 +69,8 @@ void setDisplay() {
   display.setCursor(0, 0);
   display.println("FM:");
   display.println(f);
+  display.println("Fstep:");
+  display.println(fstep);
   display.display();
 }
 
@@ -83,6 +98,9 @@ void setup() {
 
   f = 96.8;     //Start from 96.8MHz
 
+  //Set parameters to display
+  display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS);
+
   setState();
 }
 
@@ -91,21 +109,21 @@ void loop() {
   currentCLK = digitalRead(ENCODER_CLK);
   if (currentCLK != lastCLK && currentCLK == 1){
 		if (digitalRead(ENCODER_DT) == currentCLK) {
-			f+=0.1;
+			f+=fstep;
       setState();
 		} 
     if (digitalRead(ENCODER_DT) != currentCLK) {
-			f-=0.1;
+			f-=fstep;
       setState();
 		}
   }
   lastCLK = currentCLK;
-  delay(1);
 
-  //Button resets the frequncy to middle of the FM Broadcast range
-  buttonState = digitalRead(ENCODER_SW);
-  if (buttonState == LOW) {
-    f = 97.7;
+  //Button selects frequency step from tuneOptions
+  if (digitalRead(ENCODER_SW) == LOW) {
+    tuneOption = (tuneOption + 1) % 3;
+    delay(200);
     setState();
   }
+  delay(1);
 }
